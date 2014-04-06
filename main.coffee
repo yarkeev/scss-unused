@@ -2,7 +2,7 @@ fs = require 'fs'
 path = require 'path'
 Deferred = require 'when'
 
-module.exports = (scssDir, tmplDir) ->
+module.exports = (scssDir, tmplDir, callback) ->
 	regSelector = new RegExp '(\\.|#)([\\w\\s-_]*?)({|\\s|,)', 'ig'
 	selectorsUsed = {}
 
@@ -55,6 +55,10 @@ module.exports = (scssDir, tmplDir) ->
 
 
 	readRecursiveDir scssDir, (err, files) ->
+		if err
+			callback? err
+			return
+
 		promises = []
 		files.forEach (file) ->
 			filePath = path.resolve scssDir, file
@@ -77,6 +81,10 @@ module.exports = (scssDir, tmplDir) ->
 		Deferred.all(promises).then ->
 			promises = []
 			readTmplDir tmplDir, (err, files) ->
+				if err
+					callback? err
+					return
+
 				files.forEach (file) ->
 					dfd = Deferred.defer()
 					promises.push dfd.promise
@@ -91,5 +99,6 @@ module.exports = (scssDir, tmplDir) ->
 					for selector, selectorItem of selectorsUsed
 						if selectorItem.usedCount == 0
 							console.log "#{selector}\n#{selectorItem.file}\n======================"
+					callback?()
 
 
