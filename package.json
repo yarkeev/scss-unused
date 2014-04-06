@@ -1,5 +1,5 @@
 {
-  "name": "css-profiler",
+  "name": "scss-unused",
   "version": "0.0.0",
   "description": "find of unused rules on scss stylesheets",
   "main": "main.js",
