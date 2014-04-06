@@ -1,0 +1,22 @@
+{
+  "name": "css-profiler",
+  "version": "0.0.0",
+  "description": "find of unused rules on scss stylesheets",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:yarkeev/scss-unused.git"
+  },
+  "keywords": [
+    "css",
+    "profile"
+  ],
+  "author": "Yarkeev Denis <denis.yarkeev@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "when": "^3.1.0"
+  }
+}
