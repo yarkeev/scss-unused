@@ -74,12 +74,15 @@ module.exports = (scssDir, tmplDir, callback) ->
 							selector = selector.replace(/\.|#|,|{/ig, '').trim()
 							if selector && isNaN(parseInt selector) && (!selector.match(/^[\w\d]*$/) || selector.length != 6)
 								selectorsUsed[selector] = 
+									selector: selector
 									file: filePath
 									usedCount: 0
 					dfd.resolve()
 
 		Deferred.all(promises).then ->
 			promises = []
+			unusedSelectors = []
+
 			readTmplDir tmplDir, (err, files) ->
 				if err
 					callback? err
@@ -98,7 +101,7 @@ module.exports = (scssDir, tmplDir, callback) ->
 				Deferred.all(promises).then ->
 					for selector, selectorItem of selectorsUsed
 						if selectorItem.usedCount == 0
-							console.log "#{selector}\n#{selectorItem.file}\n======================"
-					callback?()
+							unusedSelectors.push selectorItem
+					callback? null, unusedSelectors
 
 

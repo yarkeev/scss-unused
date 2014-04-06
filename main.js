@@ -92,6 +92,7 @@ module.exports = function(scssDir, tmplDir, callback) {
               selector = selector.replace(/\.|#|,|{/ig, '').trim();
               if (selector && isNaN(parseInt(selector)) && (!selector.match(/^[\w\d]*$/) || selector.length !== 6)) {
                 return selectorsUsed[selector] = {
+                  selector: selector,
                   file: filePath,
                   usedCount: 0
                 };
@@ -103,7 +104,9 @@ module.exports = function(scssDir, tmplDir, callback) {
       }
     });
     return Deferred.all(promises).then(function() {
+      var unusedSelectors;
       promises = [];
+      unusedSelectors = [];
       return readTmplDir(tmplDir, function(err, files) {
         if (err) {
           if (typeof callback === "function") {
@@ -132,10 +135,10 @@ module.exports = function(scssDir, tmplDir, callback) {
           for (selector in selectorsUsed) {
             selectorItem = selectorsUsed[selector];
             if (selectorItem.usedCount === 0) {
-              console.log("" + selector + "\n" + selectorItem.file + "\n======================");
+              unusedSelectors.push(selectorItem);
             }
           }
-          return typeof callback === "function" ? callback() : void 0;
+          return typeof callback === "function" ? callback(null, unusedSelectors) : void 0;
         });
       });
     });

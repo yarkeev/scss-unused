@@ -1,6 +1,6 @@
 {
   "name": "scss-unused",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "find of unused rules on scss stylesheets",
   "main": "main.js",
   "scripts": {
