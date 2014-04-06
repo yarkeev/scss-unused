@@ -7,7 +7,7 @@ path = require('path');
 
 Deferred = require('when');
 
-module.exports = function(scssDir, tmplDir) {
+module.exports = function(scssDir, tmplDir, callback) {
   var readRecursiveDir, readTmplDir, regSelector, selectorsUsed;
   regSelector = new RegExp('(\\.|#)([\\w\\s-_]*?)({|\\s|,)', 'ig');
   selectorsUsed = {};
@@ -70,6 +70,12 @@ module.exports = function(scssDir, tmplDir) {
   };
   return readRecursiveDir(scssDir, function(err, files) {
     var promises;
+    if (err) {
+      if (typeof callback === "function") {
+        callback(err);
+      }
+      return;
+    }
     promises = [];
     files.forEach(function(file) {
       var dfd, filePath;
@@ -99,6 +105,12 @@ module.exports = function(scssDir, tmplDir) {
     return Deferred.all(promises).then(function() {
       promises = [];
       return readTmplDir(tmplDir, function(err, files) {
+        if (err) {
+          if (typeof callback === "function") {
+            callback(err);
+          }
+          return;
+        }
         files.forEach(function(file) {
           var dfd;
           dfd = Deferred.defer();
@@ -116,17 +128,14 @@ module.exports = function(scssDir, tmplDir) {
           });
         });
         return Deferred.all(promises).then(function() {
-          var selector, selectorItem, _results;
-          _results = [];
+          var selector, selectorItem;
           for (selector in selectorsUsed) {
             selectorItem = selectorsUsed[selector];
             if (selectorItem.usedCount === 0) {
-              _results.push(console.log("" + selector + "\n" + selectorItem.file + "\n======================"));
-            } else {
-              _results.push(void 0);
+              console.log("" + selector + "\n" + selectorItem.file + "\n======================");
             }
           }
-          return _results;
+          return typeof callback === "function" ? callback() : void 0;
         });
       });
     });
