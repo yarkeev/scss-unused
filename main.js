@@ -120,14 +120,19 @@ module.exports = function(scssDir, tmplDir, callback) {
           promises.push(dfd.promise);
           return fs.readFile(file, function(err, content) {
             var selector, selectorItem, tmpl;
-            tmpl = content.toString();
-            for (selector in selectorsUsed) {
-              selectorItem = selectorsUsed[selector];
-              if (tmpl.indexOf(selector) !== -1) {
-                selectorItem.usedCount++;
+            if (err) {
+              console.log(err);
+              return dfd.resolve();
+            } else {
+              tmpl = content.toString();
+              for (selector in selectorsUsed) {
+                selectorItem = selectorsUsed[selector];
+                if (tmpl.indexOf(selector) !== -1) {
+                  selectorItem.usedCount++;
+                }
               }
+              return dfd.resolve();
             }
-            return dfd.resolve();
           });
         });
         return Deferred.all(promises).then(function() {

@@ -92,11 +92,15 @@ module.exports = (scssDir, tmplDir, callback) ->
 					dfd = Deferred.defer()
 					promises.push dfd.promise
 					fs.readFile file, (err, content) ->
-						tmpl = content.toString()
-						for selector, selectorItem of selectorsUsed
-							if tmpl.indexOf(selector) != -1
-								selectorItem.usedCount++
-						dfd.resolve()
+						if err
+							console.log err
+							dfd.resolve()
+						else
+							tmpl = content.toString()
+							for selector, selectorItem of selectorsUsed
+								if tmpl.indexOf(selector) != -1
+									selectorItem.usedCount++
+							dfd.resolve()
 
 				Deferred.all(promises).then ->
 					for selector, selectorItem of selectorsUsed
